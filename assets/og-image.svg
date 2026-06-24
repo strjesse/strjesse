@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="STRJesse — Learn rental arbitrage 1-on-1 with Jesse">
+  <defs>
+    <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.6" fill="#ffffff" opacity="0.07"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="#18181B"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <!-- editorial skyline motif -->
+  <g transform="translate(760,210)" opacity="0.9">
+    <rect x="0"   y="180" width="56"  height="240" fill="#26262A"/>
+    <rect x="70"  y="110" width="56"  height="310" fill="#26262A"/>
+    <rect x="140" y="200" width="56"  height="220" fill="#26262A"/>
+    <rect x="210" y="60"  width="56"  height="360" fill="#B5400F"/>
+    <rect x="280" y="150" width="56"  height="270" fill="#26262A"/>
+    <rect x="350" y="100" width="56"  height="320" fill="#26262A"/>
+    <!-- windows on accent tower -->
+    <g fill="#FBFAF8" opacity="0.85">
+      <rect x="224" y="84"  width="12" height="12"/><rect x="244" y="84"  width="12" height="12"/>
+      <rect x="224" y="116" width="12" height="12"/><rect x="244" y="116" width="12" height="12"/>
+      <rect x="224" y="148" width="12" height="12"/><rect x="244" y="148" width="12" height="12"/>
+    </g>
+  </g>
+
+  <!-- brand + headline -->
+  <text x="90" y="120" font-family="Hanken Grotesk, Arial, sans-serif" font-size="30" font-weight="700" fill="#FBFAF8" letter-spacing="0.04em">STRJesse<tspan fill="#DE5722">.</tspan></text>
+  <text x="90" y="100" font-family="Hanken Grotesk, Arial, sans-serif" font-size="18" font-weight="600" fill="#B5400F" letter-spacing="0.18em">1-ON-1 RENTAL ARBITRAGE MENTORING</text>
+
+  <text x="88" y="300" font-family="Newsreader, Georgia, serif" font-size="78" font-weight="600" fill="#FBFAF8">Learn how the</text>
+  <text x="88" y="382" font-family="Newsreader, Georgia, serif" font-size="78" font-weight="600" fill="#FBFAF8">arbitrage model</text>
+  <text x="88" y="464" font-family="Newsreader, Georgia, serif" font-size="78" font-weight="600" fill="#FBFAF8">actually works.</text>
+
+  <text x="92" y="540" font-family="Hanken Grotesk, Arial, sans-serif" font-size="26" fill="#A8A8AE">A focused 90-minute 1-on-1 session, built around your situation.</text>
+</svg>

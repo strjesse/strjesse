@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Secondary accent — candidates · STRJesse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#18181B; --muted:#6B6B70; --line:#E7E5E0; --paper:#FBFAF8; --surface:#FFFFFF;
+    --accent:#DE5722; --accent-deep:#B5400F; --accent-soft:#FBEDE6;
+    --font-display:"Newsreader",Georgia,serif; --font-body:"Hanken Grotesk",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 24px 80px;}
+  .eyebrow{font-size:.74rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-deep);margin:0 0 12px;}
+  h1{font-family:var(--font-display);font-weight:600;letter-spacing:-.01em;line-height:1.08;font-size:clamp(2rem,5vw,3rem);margin:0 0 14px;}
+  h1 em{font-style:italic;color:var(--accent-deep);}
+  .sub{color:var(--muted);max-width:60ch;font-size:1.05rem;margin:0 0 12px;}
+  .note{color:var(--muted);max-width:64ch;font-size:.92rem;margin:0 0 40px;}
+
+  /* candidate grid */
+  .grid{display:grid;grid-template-columns:1fr;gap:24px;}
+  @media(min-width:760px){.grid{grid-template-columns:1fr 1fr;}}
+
+  .cand{
+    --c2:#0E6E63; --c2-deep:#0A554C; --c2-soft:#E6F2F0;  /* defaults overridden per card */
+    background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    box-shadow:0 1px 2px rgba(60,40,24,.05),0 16px 34px -16px rgba(60,40,24,.12);
+  }
+  .cand.is-pick{border-color:var(--c2);border-width:2px;}
+
+  .cand__top{display:flex;align-items:stretch;height:96px;}
+  .cand__sw{flex:1;display:flex;align-items:flex-end;padding:10px 12px;font-size:.72rem;font-weight:600;letter-spacing:.04em;}
+  .sw-accent{background:var(--accent);color:#fff;}
+  .sw-c2{background:var(--c2);color:#fff;}
+  .sw-c2d{background:var(--c2-deep);color:#fff;}
+
+  .cand__body{padding:22px 22px 26px;}
+  .cand__name{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px;}
+  .cand__name h2{font-family:var(--font-display);font-weight:600;font-size:1.4rem;letter-spacing:-.01em;margin:0;}
+  .pick-tag{font-size:.64rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--c2);padding:4px 9px;border-radius:999px;}
+  .hex{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums;margin:0 0 18px;}
+  .role{font-size:.9rem;color:var(--muted);margin:0 0 20px;line-height:1.55;}
+  .role strong{color:var(--ink);font-weight:600;}
+
+  /* applied component demo strip */
+  .demo{border-top:1px solid var(--line);padding-top:20px;display:grid;gap:18px;}
+  .demo-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+
+  .d-eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--c2-deep);}
+  .d-num{font-family:var(--font-display);font-weight:500;font-size:2.4rem;line-height:.9;color:transparent;-webkit-text-stroke:1.4px var(--c2);}
+  .d-chip{font-size:.72rem;font-weight:600;letter-spacing:.04em;color:var(--c2-deep);background:var(--c2-soft);border:1px solid color-mix(in srgb,var(--c2) 30%,transparent);padding:6px 12px;border-radius:999px;}
+  .d-link{color:var(--c2-deep);font-weight:600;font-size:.92rem;text-decoration:none;border-bottom:2px solid color-mix(in srgb,var(--c2) 45%,transparent);padding-bottom:1px;}
+  .d-tag{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--c2-deep);padding:5px 10px;border-radius:6px;}
+  .d-arrow{color:var(--c2);font-weight:700;}
+
+  /* mini "fit check" style card using secondary as the cool foil to orange */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .duo .mini{border:1px solid var(--line);border-radius:12px;padding:14px;}
+  .duo .mini .lbl{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+  .duo .for .lbl{color:var(--accent-deep);}
+  .duo .alt .lbl{color:var(--c2-deep);}
+  .duo .li{display:flex;gap:8px;font-size:.82rem;color:var(--muted);margin-top:6px;}
+  .duo .for .mk{color:var(--accent);font-weight:700;}
+  .duo .alt .mk{color:var(--c2);font-weight:700;}
+
+  /* score bar blend */
+  .bar{height:8px;border-radius:6px;background:var(--line);overflow:hidden;}
+  .bar>span{display:block;height:100%;width:72%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--c2));}
+  .barlbl{font-size:.74rem;color:var(--muted);margin-bottom:8px;}
+
+  .foot{margin-top:48px;border-top:1px solid var(--line);padding-top:24px;color:var(--muted);font-size:.9rem;max-width:70ch;}
+  .foot strong{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Palette study</p>
+  <h1>A <em>secondary tonal accent</em> for hierarchy.</h1>
+  <p class="sub">Right now everything decorative leans on the single orange, which flattens a long page. A second tone adds a quiet layer of hierarchy — a cool foil that lets the orange stay the action colour while the second tone carries calm, structural, or "informational" moments.</p>
+  <p class="note">Each card shows the candidate beside the brand orange, then applies it to the real component vocabulary: eyebrow, ghost numeral, chip, link, tag, the fit-check foil, and a score bar that blends from orange → secondary. Tell me which direction to develop and I'll wire it into the live tokens.</p>
+
+  <div class="grid">
+
+    <!-- 1. Ink Teal -->
+    <article class="cand is-pick" style="--c2:#0E6E63;--c2-deep:#0A554C;--c2-soft:#E6F2F0;">
+      <div class="cand__top">
+        <div class="cand__sw sw-accent">Orange · action</div>
+        <div class="cand__sw sw-c2">#0E6E63</div>
+        <div class="cand__sw sw-c2d">#0A554C</div>
+      </div>
+      <div class="cand__body">
+        <div class="cand__name"><h2>Ink Teal</h2><span class="pick-tag">Recommended</span></div>
+        <p class="hex">#0E6E63 · deep #0A554C · soft #E6F2F0</p>
+        <p class="role">A deep, slightly desaturated teal — the cleanest complement to warm orange. Reads <strong>professional and grounded</strong>, never corporate-blue. Best for: the fit-check "great fit" foil, FAQ markers, trust/secure cues, and the cool end of data bars.</p>
+        <div class="demo">
+          <div class="demo-row">
+            <span class="d-eyebrow">How it works</span>
+            <span class="d-num">02</span>
+            <span class="d-chip">Beginner friendly</span>
+          </div>
+          <div class="demo-row">
+            <a class="d-link" href="#">Read the method →</a>
+            <span class="d-tag">Secure</span>
+            <span class="d-arrow">→ grounded</span>
+          </div>
+          <div class="duo">
+            <div class="mini for"><div class="lbl">Action / orange</div><div class="li"><span class="mk">✓</span>Book a session</div><div class="li"><span class="mk">✓</span>Primary CTAs</div></div>
+            <div class="mini alt"><div class="lbl">Info / teal</div><div class="li"><span class="mk">✓</span>Reassurance</div><div class="li"><span class="mk">✓</span>Structure</div></div>
+          </div>
+          <div><div class="barlbl">Deal score — orange → teal blend</div><div class="bar"><span></span></div></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 2. Slate Blue -->
+    <article class="cand" style="--c2:#2C4A6E;--c2-deep:#223954;--c2-soft:#EAEFF6;">
+      <div class="cand__top">
+        <div class="cand__sw sw-accent">Orange · action</div>
+        <div class="cand__sw sw-c2">#2C4A6E</div>
+        <div class="cand__sw sw-c2d">#223954</div>
+      </div>
+      <div class="cand__body">
+        <div class="cand__name"><h2>Slate Blue</h2></div>
+        <p class="hex">#2C4A6E · deep #223954 · soft #EAEFF6</p>
+        <p class="role">A muted navy-slate. Carries the most <strong>authority and trust</strong> of the set — leans editorial/financial. Strong contrast with orange, but cooler and more "fintech" in feel. Best if you want the page to read serious and credible above all.</p>
+        <div class="demo">
+          <div class="demo-row">
+            <span class="d-eyebrow">How it works</span>
+            <span class="d-num">02</span>
+            <span class="d-chip">Beginner friendly</span>
+          </div>
+          <div class="demo-row">
+            <a class="d-link" href="#">Read the method →</a>
+            <span class="d-tag">Secure</span>
+            <span class="d-arrow">→ credible</span>
+          </div>
+          <div class="duo">
+            <div class="mini for"><div class="lbl">Action / orange</div><div class="li"><span class="mk">✓</span>Book a session</div><div class="li"><span class="mk">✓</span>Primary CTAs</div></div>
+            <div class="mini alt"><div class="lbl">Info / slate</div><div class="li"><span class="mk">✓</span>Reassurance</div><div class="li"><span class="mk">✓</span>Structure</div></div>
+          </div>
+          <div><div class="barlbl">Deal score — orange → slate blend</div><div class="bar"><span></span></div></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 3. Olive -->
+    <article class="cand" style="--c2:#5C6B2E;--c2-deep:#475325;--c2-soft:#EEF1E2;">
+      <div class="cand__top">
+        <div class="cand__sw sw-accent">Orange · action</div>
+        <div class="cand__sw sw-c2">#5C6B2E</div>
+        <div class="cand__sw sw-c2d">#475325</div>
+      </div>
+      <div class="cand__body">
+        <div class="cand__name"><h2>Olive</h2></div>
+        <p class="hex">#5C6B2E · deep #475325 · soft #EEF1E2</p>
+        <p class="role">An earthy yellow-green. Sits <strong>analogous</strong> to orange, so the page stays warm and editorial rather than splitting warm/cool. Quietly signals "growth / money" without the cliché of bright green. Best for a softer, organic, magazine feel.</p>
+        <div class="demo">
+          <div class="demo-row">
+            <span class="d-eyebrow">How it works</span>
+            <span class="d-num">02</span>
+            <span class="d-chip">Beginner friendly</span>
+          </div>
+          <div class="demo-row">
+            <a class="d-link" href="#">Read the method →</a>
+            <span class="d-tag">Secure</span>
+            <span class="d-arrow">→ organic</span>
+          </div>
+          <div class="duo">
+            <div class="mini for"><div class="lbl">Action / orange</div><div class="li"><span class="mk">✓</span>Book a session</div><div class="li"><span class="mk">✓</span>Primary CTAs</div></div>
+            <div class="mini alt"><div class="lbl">Info / olive</div><div class="li"><span class="mk">✓</span>Reassurance</div><div class="li"><span class="mk">✓</span>Structure</div></div>
+          </div>
+          <div><div class="barlbl">Deal score — orange → olive blend</div><div class="bar"><span></span></div></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 4. Espresso -->
+    <article class="cand" style="--c2:#5A4632;--c2-deep:#463525;--c2-soft:#EFE9E2;">
+      <div class="cand__top">
+        <div class="cand__sw sw-accent">Orange · action</div>
+        <div class="cand__sw sw-c2">#5A4632</div>
+        <div class="cand__sw sw-c2d">#463525</div>
+      </div>
+      <div class="cand__body">
+        <div class="cand__name"><h2>Espresso</h2></div>
+        <p class="hex">#5A4632 · deep #463525 · soft #EFE9E2</p>
+        <p class="role">A warm dark brown — a <strong>tonal sibling</strong> of the orange rather than a contrast. The most restrained option: it deepens hierarchy and pairs beautifully with the sand panel without introducing a new hue at all. Best if you want richness with zero risk of "two-colour" loudness.</p>
+        <div class="demo">
+          <div class="demo-row">
+            <span class="d-eyebrow">How it works</span>
+            <span class="d-num">02</span>
+            <span class="d-chip">Beginner friendly</span>
+          </div>
+          <div class="demo-row">
+            <a class="d-link" href="#">Read the method →</a>
+            <span class="d-tag">Secure</span>
+            <span class="d-arrow">→ restrained</span>
+          </div>
+          <div class="duo">
+            <div class="mini for"><div class="lbl">Action / orange</div><div class="li"><span class="mk">✓</span>Book a session</div><div class="li"><span class="mk">✓</span>Primary CTAs</div></div>
+            <div class="mini alt"><div class="lbl">Info / espresso</div><div class="li"><span class="mk">✓</span>Reassurance</div><div class="li"><span class="mk">✓</span>Structure</div></div>
+          </div>
+          <div><div class="barlbl">Deal score — orange → espresso blend</div><div class="bar"><span></span></div></div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <p class="foot"><strong>My recommendation:</strong> Ink Teal. It's the only true complement here, so it creates real hierarchy (orange = act, teal = inform/reassure) while still reading warm and human, not corporate. Espresso is the safest if you'd rather not introduce a second hue at all. Once you pick, I'll add <code>--accent-2 / --accent-2-deep / --accent-2-soft</code> to the live tokens and apply it surgically — fit-check foil, FAQ markers, secure/trust cues, and the cool end of the score bar — without touching the orange's role.</p>
+</div>
+</body>
+</html>
