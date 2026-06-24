@@ -90,14 +90,21 @@ This lets the backend read your free/busy, create confirmed events, and attach a
    > email **as you** (`GOOGLE_IMPERSONATE_SUBJECT`). Optionally set `BOOKING_BCC`
    > to blind-copy yourself on every confirmation.
 
-**e. Env vars**
-10. `GOOGLE_CALENDAR_ID` = your Workspace email (e.g. `jesse@yourdomain.com`).
-11. `GOOGLE_IMPERSONATE_SUBJECT` = the **same** Workspace email. (This is the
-    switch that turns on auto-Meet — the backend acts as this user.)
-12. `BUSINESS_TIMEZONE` = your working timezone (e.g. `Australia/Sydney`).
-13. Leave `MEETING_URL` **empty** — Meet links are now automatic.
+**e. Branded calendar (so invites say "STRJesse", not your name)**
+10. In Google Calendar → **Other calendars → + → Create new calendar** → name it
+    **STRJesse** → Create. (Events created here show "STRJesse" as the organiser.)
+11. Open that calendar's **Settings → Integrate calendar → Calendar ID** and copy
+    it (looks like `…@group.calendar.google.com`).
 
-> No manual calendar sharing is needed: delegation lets the backend act as you.
+**f. Env vars**
+12. `GOOGLE_CALENDAR_ID` = the **STRJesse** calendar id from step 11.
+13. `GOOGLE_IMPERSONATE_SUBJECT` = your Workspace email (the account that owns the
+    STRJesse calendar). This is the switch that turns on auto-Meet + email.
+14. `BUSINESS_TIMEZONE` = your working timezone (e.g. `Australia/Sydney`).
+15. Leave `MEETING_URL` **empty** — Meet links are now automatic.
+
+> No manual calendar sharing is needed: delegation lets the backend act as you,
+> and the impersonated user owns the STRJesse calendar.
 
 ---
 
