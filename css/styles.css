@@ -836,6 +836,12 @@ body { padding-bottom: 76px; } /* room for sticky bar */
 .site-header { position: relative; }
 @media (min-width: 720px) { .site-header { position: sticky; } }
 
+/* Keep the header height constant on scroll. The condense (72->56px)
+   shifts the negative-margin hero and re-crosses the scroll threshold,
+   causing a flicker loop near the top — so pin the height instead. */
+.site-header.scrolled .nav { height: 60px; }
+@media (min-width: 900px) { .site-header.scrolled .nav { height: 72px; } }
+
 /* ============================================================
  * GRID-BREAK + MICRO-DETAIL PASS — vary section silhouettes
  * away from the repeating card-grid rhythm, and add small
