@@ -11,6 +11,20 @@
    ===================================================================== */
 const Stripe = require("stripe");
 const { createEvent, calendarConfigured, workspaceMode } = require("../lib/google");
+const { emailConfigured, sendConfirmation } = require("../lib/email");
+const { SESSION_MINUTES } = require("../lib/slots");
+
+// Pull the Google Meet URL out of a created event.
+function meetLinkOf(ev, fallback) {
+  if (ev && ev.hangoutLink) return ev.hangoutLink;
+  var eps = ev && ev.conferenceData && ev.conferenceData.entryPoints;
+  if (eps) {
+    for (var i = 0; i < eps.length; i++) {
+      if (eps[i].entryPointType === "video" && eps[i].uri) return eps[i].uri;
+    }
+  }
+  return fallback || "";
+}
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
@@ -44,9 +58,10 @@ module.exports = async function (req, res) {
     var joinLine = autoMeet
       ? "A Google Meet link is attached to this invite."
       : (meet ? "Join: " + meet : "Add the meeting link to this event.");
+    var createdEvent = null;
     try {
       if (calendarConfigured() && md.startUTC && md.endUTC) {
-        await createEvent({
+        createdEvent = await createEvent({
           summary: "STR session — " + (md.name || md.email || "Client"),
           description:
             "90-minute 1-on-1 rental arbitrage session.\n\n" +
@@ -66,6 +81,21 @@ module.exports = async function (req, res) {
     } catch (err) {
       // Don't fail the webhook (Stripe would retry). Log so you can recover.
       console.error("Calendar event creation failed:", err);
+    }
+
+    // Branded confirmation email with next steps + the Meet link.
+    try {
+      if (emailConfigured() && md.email && md.startUTC) {
+        await sendConfirmation({
+          name: md.name,
+          email: md.email,
+          startUTC: md.startUTC,
+          durationMin: SESSION_MINUTES,
+          meetLink: meetLinkOf(createdEvent, meet)
+        });
+      }
+    } catch (err) {
+      console.error("Confirmation email failed:", err);
     }
   }
 

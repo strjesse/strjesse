@@ -60,9 +60,10 @@ new `whsec_…`) and update the two Vercel variables.
 This lets the backend read your free/busy, create confirmed events, and attach a
 **fresh Google Meet link to every booking** by acting as your Workspace user.
 
-**a. Project + API**
+**a. Project + APIs**
 1. **https://console.cloud.google.com** → create a project (e.g. `strjesse`).
-2. **APIs & Services → Library** → enable **Google Calendar API**.
+2. **APIs & Services → Library** → enable **Google Calendar API** AND **Gmail API**
+   (the Gmail API is what sends the branded confirmation email).
 
 **b. Service account + key**
 3. **APIs & Services → Credentials → Create credentials → Service account**.
@@ -81,8 +82,13 @@ This lets the backend read your free/busy, create confirmed events, and attach a
 7. **https://admin.google.com → Security → Access and data control → API controls
    → Manage Domain-Wide Delegation → Add new**.
 8. **Client ID** = the service account's Client ID from step 4.
-   **OAuth scopes** = `https://www.googleapis.com/auth/calendar`
+   **OAuth scopes** (comma-separated — paste both):
+   `https://www.googleapis.com/auth/calendar,https://www.googleapis.com/auth/gmail.send`
 9. **Authorize**.
+
+   > The `gmail.send` scope lets the backend send the branded confirmation
+   > email **as you** (`GOOGLE_IMPERSONATE_SUBJECT`). Optionally set `BOOKING_BCC`
+   > to blind-copy yourself on every confirmation.
 
 **e. Env vars**
 10. `GOOGLE_CALENDAR_ID` = your Workspace email (e.g. `jesse@yourdomain.com`).
