@@ -10,7 +10,7 @@
    Optional env: MEETING_URL (your permanent Zoom/Meet room link)
    ===================================================================== */
 const Stripe = require("stripe");
-const { createEvent, calendarConfigured } = require("../lib/google");
+const { createEvent, calendarConfigured, workspaceMode } = require("../lib/google");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
@@ -38,7 +38,12 @@ module.exports = async function (req, res) {
 
   if (event.type === "checkout.session.completed") {
     var md = (event.data.object && event.data.object.metadata) || {};
+    // Workspace mode auto-attaches a Meet link; otherwise use a fixed room.
+    var autoMeet = workspaceMode();
     var meet = process.env.MEETING_URL || "";
+    var joinLine = autoMeet
+      ? "A Google Meet link is attached to this invite."
+      : (meet ? "Join: " + meet : "Add the meeting link to this event.");
     try {
       if (calendarConfigured() && md.startUTC && md.endUTC) {
         await createEvent({
@@ -48,8 +53,8 @@ module.exports = async function (req, res) {
             "Client: " + (md.name || "") + "\n" +
             "Email: " + (md.email || "") + "\n" +
             "Goals: " + (md.goal || "(none provided)") + "\n\n" +
-            (meet ? "Join: " + meet : "Add the meeting link to this event."),
-          location: meet,
+            joinLine,
+          location: autoMeet ? undefined : meet,
           start: { dateTime: md.startUTC, timeZone: "UTC" },
           end: { dateTime: md.endUTC, timeZone: "UTC" },
           attendees: md.email ? [{ email: md.email, displayName: md.name || undefined }] : [],
