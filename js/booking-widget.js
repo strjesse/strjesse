@@ -1,8 +1,12 @@
 /* =====================================================================
-   Book-a-session widget — static front-end, no backend.
-   State lives in JS; calendar + slots render from it. The real
-   Stripe + Google Calendar flow plugs into the BACKEND HOOK in the
-   step-3 submit handler.
+   Book-a-session widget — now backed by serverless functions.
+     • Step 2 slot times come from GET /api/availability (real calendar).
+     • Step 3 submit creates a Stripe Checkout session via
+       POST /api/create-checkout, then redirects to Stripe.
+     • On return, ?booking=success shows the confirmation step.
+
+   Falls back to a self-contained DEMO (no network) when the API is
+   unreachable — so the page still works opened as a static file.
    ===================================================================== */
 (function () {
   "use strict";
@@ -12,9 +16,10 @@
 
   var $ = function (id) { return document.getElementById(id); };
 
-  // ---- Config (one place to retune) ----
+  // ---- Config ----
   var PRICE_LABEL = "$250";
-  var TIME_SLOTS = ["9:00 AM", "11:00 AM", "1:30 PM", "4:00 PM", "6:30 PM"];
+  // Fallback slots used only if the availability API can't be reached.
+  var FALLBACK_SLOTS = ["9:00 AM", "11:00 AM", "1:30 PM", "4:00 PM", "6:30 PM"];
   var DOW = ["S", "M", "T", "W", "T", "F", "S"];
 
   // ---- State ----
@@ -22,9 +27,9 @@
   today.setHours(0, 0, 0, 0);
 
   var state = {
-    date: null,                                   // Date of chosen day
-    time: null,                                   // string slot
-    view: new Date(today.getFullYear(), today.getMonth(), 1) // month being viewed
+    date: null,
+    time: null,
+    view: new Date(today.getFullYear(), today.getMonth(), 1)
   };
 
   // ---------------------------------------------------------------
@@ -36,7 +41,7 @@
     }
     var segs = $("progress").children;
     for (var i = 0; i < segs.length; i++) {
-      segs[i].classList.toggle("on", i < n); // light segments 1..n
+      segs[i].classList.toggle("on", i < n);
     }
   }
 
@@ -45,6 +50,13 @@
   // ---------------------------------------------------------------
   var MONTHS = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
+
+  function isoDate(date) {
+    var y = date.getFullYear();
+    var m = String(date.getMonth() + 1).padStart(2, "0");
+    var d = String(date.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + d;
+  }
 
   function sameDay(a, b) {
     return a && b && a.getFullYear() === b.getFullYear() &&
@@ -60,7 +72,7 @@
     var y = state.view.getFullYear();
     var m = state.view.getMonth();
     $("calTitle").textContent = MONTHS[m] + " " + y;
-    $("prevMonth").disabled = isCurrentMonthView(); // can't go before this month
+    $("prevMonth").disabled = isCurrentMonthView();
 
     var grid = $("calGrid");
     grid.innerHTML = "";
@@ -72,7 +84,7 @@
       grid.appendChild(el);
     });
 
-    var firstDow = new Date(y, m, 1).getDay();        // 0 = Sunday
+    var firstDow = new Date(y, m, 1).getDay();
     var daysInMonth = new Date(y, m + 1, 0).getDate();
 
     for (var b = 0; b < firstDow; b++) {
@@ -109,8 +121,8 @@
   function selectDate(date) {
     state.date = date;
     state.time = null;
+    goToStep(2);
     renderTimeStep();
-    goToStep(2);            // lights progress segment 2
   }
 
   $("prevMonth").addEventListener("click", function () {
@@ -124,17 +136,25 @@
   });
 
   // ---------------------------------------------------------------
-  // STEP 2 — Times
+  // STEP 2 — Times (loaded from the availability API)
   // ---------------------------------------------------------------
   function fmtLong(date) {
     return date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
   }
 
-  function renderTimeStep() {
-    $("timeSub").textContent = fmtLong(state.date);
+  function renderSlots(slots) {
     var wrap = $("slots");
     wrap.innerHTML = "";
-    TIME_SLOTS.forEach(function (t) {
+
+    if (!slots || !slots.length) {
+      var none = document.createElement("p");
+      none.className = "slots-empty";
+      none.textContent = "No times left on this day — try another date.";
+      wrap.appendChild(none);
+      return;
+    }
+
+    slots.forEach(function (t) {
       var b = document.createElement("button");
       b.type = "button";
       b.className = "slot" + (t === state.time ? " is-selected" : "");
@@ -144,9 +164,19 @@
     });
   }
 
+  function renderTimeStep() {
+    $("timeSub").textContent = fmtLong(state.date);
+    var wrap = $("slots");
+    wrap.innerHTML = '<p class="slots-empty">Checking availability…</p>';
+
+    fetch("/api/availability?date=" + isoDate(state.date), { headers: { "Accept": "application/json" } })
+      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
+      .then(function (data) { renderSlots(data.slots); })
+      .catch(function () { renderSlots(FALLBACK_SLOTS); }); // offline/static fallback
+  }
+
   function selectTime(t) {
     state.time = t;
-    renderTimeStep();
     renderSummary();
     goToStep(3);
   }
@@ -154,7 +184,7 @@
   $("backToDates").addEventListener("click", function () { goToStep(1); });
 
   // ---------------------------------------------------------------
-  // STEP 3 — Details
+  // STEP 3 — Details → Stripe Checkout
   // ---------------------------------------------------------------
   function renderSummary() {
     $("sumDate").textContent = fmtLong(state.date);
@@ -163,54 +193,108 @@
 
   $("backToTimes").addEventListener("click", function () { goToStep(2); });
 
+  var submitBtn = null;
+  function setSubmitting(form, on) {
+    if (!submitBtn) submitBtn = form.querySelector('button[type="submit"]');
+    if (!submitBtn) return;
+    submitBtn.disabled = on;
+    if (on) {
+      submitBtn.dataset.label = submitBtn.textContent;
+      submitBtn.textContent = "Redirecting to secure checkout…";
+    } else if (submitBtn.dataset.label) {
+      submitBtn.textContent = submitBtn.dataset.label;
+    }
+  }
+
+  function showError(form, msg) {
+    var box = form.querySelector(".form-error");
+    if (!box) {
+      box = document.createElement("p");
+      box.className = "form-error";
+      form.insertBefore(box, form.firstChild);
+    }
+    box.textContent = msg;
+  }
+
   $("detailsForm").addEventListener("submit", function (e) {
     e.preventDefault();
     if (!this.checkValidity()) { this.reportValidity(); return; }
+    var form = this;
 
     var data = {
       name:  $("name").value.trim(),
       email: $("email").value.trim(),
       goal:  $("goal").value.trim(),
-      date:  state.date,                            // Date object
-      time:  state.time,                            // string
-      price: PRICE_LABEL
+      date:  isoDate(state.date),   // YYYY-MM-DD
+      time:  state.time             // "9:00 AM"
     };
 
-    /* =================================================================
-       BACKEND HOOK — real Stripe + Google Calendar flow goes here.
-       This static demo just simulates success (step 4). To go live:
+    setSubmitting(form, true);
+    showError(form, "");
 
-         1. POST `data` to your server endpoint.
-              fetch("/api/book", { method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data) })
-
-         2. Server creates a Stripe Checkout Session (amount configurable)
-            AND places a tentative Google Calendar hold for date + time.
-
-         3. Server responds with the Stripe-hosted checkout URL; redirect:
-              window.location.href = session.url;
-
-         4. On the Stripe `checkout.session.completed` webhook, the server
-            confirms the Google Calendar event and emails the invite.
-
-       Until then, we just advance to the confirmation step.
-       ================================================================= */
-
-    showConfirmation(data);
+    fetch("/api/create-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    })
+      .then(function (r) {
+        // No backend deployed (static host) → demo confirmation.
+        if (r.status === 404) { showConfirmation(data, true); return null; }
+        return r.text().then(function (text) {
+          var body = null;
+          try { body = JSON.parse(text); } catch (e) { /* non-JSON */ }
+          return { ok: r.ok, body: body };
+        });
+      })
+      .then(function (res) {
+        if (!res) return; // handled above
+        if (res.ok && res.body && res.body.url) {
+          window.location.href = res.body.url; // → Stripe Checkout
+          return;
+        }
+        throw new Error((res.body && res.body.error) || "Could not start checkout. Please try again.");
+      })
+      .catch(function (err) {
+        // Network failure (e.g. opened as a static file) → demo confirmation.
+        if (err && err.message === "Failed to fetch") {
+          showConfirmation(data, true);
+        } else {
+          setSubmitting(form, false);
+          showError(form, err.message || "Something went wrong. Please try again.");
+        }
+      });
   });
 
   // ---------------------------------------------------------------
   // STEP 4 — Confirmation
   // ---------------------------------------------------------------
-  function showConfirmation(data) {
-    var when = fmtLong(data.date);
+  function showConfirmation(data, demo) {
+    var when = data && data.date ? fmtLong(parseISO(data.date)) : "your selected day";
+    var time = (data && data.time) || "your selected time";
+    var email = (data && data.email) || "your email";
     $("confirmText").innerHTML =
-      "Your session is reserved for <span class=\"hl\">" + when +
-      "</span> at <span class=\"hl\">" + data.time +
-      "</span>. A confirmation and calendar invite are on the way to <span class=\"hl\">" +
-      escapeHtml(data.email) + "</span>.";
+      "Your session is booked for <span class=\"hl\">" + when +
+      "</span> at <span class=\"hl\">" + time +
+      "</span>. A calendar invite and confirmation are on the way to <span class=\"hl\">" +
+      escapeHtml(email) + "</span>.";
+    var demoNote = document.querySelector(".confirm__demo");
+    if (demoNote) demoNote.style.display = demo ? "" : "none";
     goToStep(4);
+  }
+
+  function showSuccessFromRedirect() {
+    // Returned from Stripe after a successful payment.
+    $("confirmText").innerHTML =
+      "Payment received — your session is booked. A calendar invite and " +
+      "confirmation are on the way to your email.";
+    var demoNote = document.querySelector(".confirm__demo");
+    if (demoNote) demoNote.style.display = "none";
+    goToStep(4);
+  }
+
+  function parseISO(s) {
+    var p = String(s).split("-");
+    return new Date(+p[0], +p[1] - 1, +p[2]);
   }
 
   function escapeHtml(s) {
@@ -221,5 +305,15 @@
 
   // ---- Init ----
   renderCalendar();
-  goToStep(1);
+
+  var params = new URLSearchParams(window.location.search);
+  if (params.get("booking") === "success") {
+    showSuccessFromRedirect();
+    history.replaceState(null, "", window.location.pathname + "#book");
+  } else {
+    goToStep(1);
+    if (params.get("booking") === "cancelled") {
+      history.replaceState(null, "", window.location.pathname + "#book");
+    }
+  }
 })();

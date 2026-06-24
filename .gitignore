@@ -11,6 +11,12 @@ Desktop.ini
 node_modules/
 npm-debug.log*
 
+# Secrets & build output — NEVER commit
+.env
+.env.*
+!.env.example
+.vercel/
+
 # Design preview mockups — kept local, not published
 previews/
 

@@ -457,6 +457,9 @@ details p { padding: 0 0 22px; color: var(--muted); line-height: 1.6; max-width:
 .bw .confirm p .hl { color: var(--text); font-weight: 600; }
 .bw .confirm__demo { margin-top: 22px; font-size: .78rem; color: var(--muted-2); }
 
+.bw .slots-empty { grid-column: 1 / -1; color: var(--muted); font-size: .92rem; margin: 4px 0; }
+.bw .form-error { background: rgba(226,75,74,.12); border: 1px solid rgba(226,75,74,.4); color: #ffb4b3; font-size: .88rem; padding: 10px 13px; border-radius: 10px; margin: 0 0 16px; }
+
 .bw :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 @media (min-width: 900px) {

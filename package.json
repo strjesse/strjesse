@@ -1,0 +1,14 @@
+{
+  "name": "strjesse",
+  "version": "1.0.0",
+  "private": true,
+  "description": "STRJesse landing page + booking backend (Stripe Checkout + Google Calendar)",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0",
+    "luxon": "^3.5.0",
+    "stripe": "^17.5.0"
+  }
+}
