@@ -815,7 +815,9 @@ body { padding-bottom: 76px; } /* room for sticky bar */
 .site-header:not(.scrolled) .nav-cta:hover { background: var(--accent); color: #fff; }
 
 @media (min-width: 900px) {
-  .hero.hero--media { margin-top: -72px; }
+  /* fill the whole viewport: -72px margin pulls the hero under the header,
+     100vh height then makes its bottom land exactly at the fold. */
+  .hero.hero--media { margin-top: -72px; min-height: 100vh; }
 }
 @media (max-width: 600px) {
   .hero.hero--media { min-height: 86vh; }
