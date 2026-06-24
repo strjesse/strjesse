@@ -822,6 +822,12 @@ body { padding-bottom: 76px; } /* room for sticky bar */
   .hero--media .hero__inner { padding: 104px 0 52px; }
 }
 
+/* Avoid duplicate CTA on mobile: the sticky bottom bar already shows
+   "Book a session", so hide the header button until desktop (where the
+   bottom bar is hidden). */
+.nav-cta { display: none; }
+@media (min-width: 720px) { .nav-cta { display: inline-flex; } }
+
 /* ============================================================
  * GRID-BREAK + MICRO-DETAIL PASS — vary section silhouettes
  * away from the repeating card-grid rhythm, and add small
