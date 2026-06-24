@@ -759,6 +759,70 @@ body { padding-bottom: 76px; } /* room for sticky bar */
 }
 
 /* ============================================================
+ * FULL-BLEED FAÇADE HERO — image background, headline + buttons
+ * + stat row + rating overlaid; header goes transparent over it.
+ * ========================================================== */
+.hero.hero--media {
+  position: relative; min-height: 94vh; display: flex; align-items: center;
+  padding: 0; margin-top: -60px; overflow: hidden; background: #0b0b0d; text-align: center;
+}
+.hero.hero--media::before { content: none; } /* remove the light ambient glow */
+
+.hero--media .hero__img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center; z-index: 0;
+}
+/* legibility scrim — keeps the windows visible but lifts the type */
+.hero--media .hero__scrim {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg, rgba(10,10,12,.62) 0%, rgba(10,10,12,.42) 38%, rgba(10,10,12,.78) 100%);
+}
+.hero--media .hero__scrim2 {
+  position: absolute; inset: 0; z-index: 1;
+  background: radial-gradient(110% 80% at 50% 44%, rgba(0,0,0,0) 32%, rgba(8,8,10,.55) 100%);
+}
+/* faint warm wash so cool windows lean to the brand */
+.hero--media .hero__warm {
+  position: absolute; inset: 0; z-index: 1; mix-blend-mode: soft-light; opacity: .5;
+  background: radial-gradient(70% 60% at 50% 40%, rgba(222,87,34,.55), transparent 70%);
+}
+.hero--media .hero__inner { position: relative; z-index: 5; padding: 120px 0 64px; }
+
+.hero--media .eyebrow {
+  display: inline-flex; align-items: center; gap: 12px; color: #fff; margin: 0 0 20px;
+}
+.hero--media .eyebrow::before { content: ""; width: 30px; height: 2px; background: var(--accent); border-radius: 2px; }
+.hero--media h1 { color: #fff; margin: 0 auto; max-width: 16ch; }
+.hero--media h1 em { color: var(--accent); }
+.hero--media .stats { border-top-color: rgba(255,255,255,.2); }
+.hero--media .stat .num { color: #fff; }
+.hero--media .stat .num.accent { color: var(--accent); }
+.hero--media .stat .lbl { color: rgba(255,255,255,.66); }
+.hero--media .trust-strip { color: rgba(255,255,255,.8); }
+.hero--media .trust-strip .stars { color: var(--accent); }
+.hero--media .trust-strip strong { color: #fff; font-weight: 600; }
+
+/* outline-light button for the dark hero */
+.btn--wire { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.45); }
+.btn--wire:hover { border-color: #fff; background: rgba(255,255,255,.08); }
+
+/* header overlays the hero, transparent until scrolled */
+.site-header:not(.scrolled) { background: transparent; backdrop-filter: none; border-bottom-color: transparent; }
+.site-header:not(.scrolled) .brand { color: #fff; }
+.site-header:not(.scrolled) .nav-links a { color: rgba(255,255,255,.8); }
+.site-header:not(.scrolled) .nav-links a:hover { color: #fff; }
+.site-header:not(.scrolled) .nav-cta { background: #fff; color: var(--ink); border-color: transparent; }
+.site-header:not(.scrolled) .nav-cta:hover { background: var(--accent); color: #fff; }
+
+@media (min-width: 900px) {
+  .hero.hero--media { margin-top: -72px; }
+}
+@media (max-width: 600px) {
+  .hero.hero--media { min-height: 86vh; }
+  .hero--media .hero__inner { padding: 104px 0 52px; }
+}
+
+/* ============================================================
  * GRID-BREAK + MICRO-DETAIL PASS — vary section silhouettes
  * away from the repeating card-grid rhythm, and add small
  * tactile motion on hover / scroll.

@@ -55,6 +55,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet" />
+<link rel="preload" as="image" href="assets/hero-facade.jpg" />
 <link rel="stylesheet" href="css/styles.css" />
 
 <meta name="robots" content="index, follow" />
@@ -91,28 +92,28 @@
 
 <main id="top">
 
-  <!-- Hero (centered) -->
-  <section class="hero">
-    <div class="wrap">
+  <!-- Hero (full-bleed façade) -->
+  <section class="hero hero--media">
+    <img class="hero__img" src="assets/hero-facade.jpg" alt="" aria-hidden="true" />
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="hero__scrim2" aria-hidden="true"></div>
+    <div class="hero__warm" aria-hidden="true"></div>
+    <div class="wrap hero__inner">
       <p class="eyebrow">1-on-1 Rental Arbitrage Mentoring</p>
       <h1>Learn how the rental arbitrage model <em>actually works</em>.</h1>
-      <p class="lead">A focused 90-minute 1-on-1 session with Jesse. Understand the short-term rental arbitrage model end to end — and exactly how it could work for your market, your budget, and your goals.</p>
       <div class="hero-actions">
         <a href="#book" class="btn btn--accent btn--lg">Book your session</a>
-        <a href="#how" class="btn btn--ghost btn--lg">See how it works</a>
+        <a href="#how" class="btn btn--wire btn--lg">See how it works</a>
       </div>
 
       <div class="stats">
         <div class="stat"><div class="num serif-num">90 min</div><div class="lbl">Built around you</div></div>
         <div class="stat"><div class="num accent serif-num">1:1</div><div class="lbl">Live with Jesse</div></div>
         <div class="stat"><div class="num serif-num">95%</div><div class="lbl">Cheaper than online courses</div></div>
-        <div class="stat"><div class="num serif-num">A→Z</div><div class="lbl">The whole model explained</div></div>
+        <div class="stat"><div class="num serif-num">A&rarr;Z</div><div class="lbl">The whole model explained</div></div>
       </div>
 
-      <p class="trust-strip">
-        <span class="stars" aria-hidden="true">★★★★★</span>
-        Rated <strong>4.9/5</strong> by mentees · <strong>120+</strong> units placed · sessions for beginners &amp; operators
-      </p>
+      <p class="trust-strip"><span class="stars" aria-hidden="true">★★★★★</span> <strong>4.9/5</strong> from mentees</p>
     </div>
   </section>
 
