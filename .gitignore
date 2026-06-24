@@ -11,5 +11,8 @@ Desktop.ini
 node_modules/
 npm-debug.log*
 
+# Design preview mockups — kept local, not published
+previews/
+
 # Local Claude Code config (machine-specific)
 .claude/
