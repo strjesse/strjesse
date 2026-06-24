@@ -828,6 +828,12 @@ body { padding-bottom: 76px; } /* room for sticky bar */
 .nav-cta { display: none; }
 @media (min-width: 720px) { .nav-cta { display: inline-flex; } }
 
+/* On mobile the header scrolls away with the page (only the bottom CTA
+   bar stays fixed). `relative` keeps it above the hero via z-index;
+   it returns to sticky on desktop. */
+.site-header { position: relative; }
+@media (min-width: 720px) { .site-header { position: sticky; } }
+
 /* ============================================================
  * GRID-BREAK + MICRO-DETAIL PASS — vary section silhouettes
  * away from the repeating card-grid rhythm, and add small
