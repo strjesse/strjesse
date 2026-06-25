@@ -17,7 +17,7 @@
   var $ = function (id) { return document.getElementById(id); };
 
   // ---- Config ----
-  var PRICE_LABEL = "$250";
+  var PRICE_LABEL = "$597 AUD";
   // Fallback slots used only if the availability API can't be reached.
   var FALLBACK_SLOTS = ["9:00 AM", "11:00 AM", "1:30 PM", "4:00 PM", "6:30 PM"];
   var DOW = ["S", "M", "T", "W", "T", "F", "S"];
