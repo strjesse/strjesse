@@ -843,6 +843,39 @@ body { padding-bottom: 76px; } /* room for sticky bar */
 @media (min-width: 900px) { .site-header.scrolled .nav { height: 72px; } }
 
 /* ============================================================
+ * PROOF / WHY-TRUST SECTION (photo-led)
+ * ========================================================== */
+.proof .head .lead { max-width: 60ch; }
+
+/* photo-led gallery — wide, short property photos with the review
+   badge sitting flush at the bottom at its natural (uncropped) size */
+.proof .pg2-gallery { display: grid; grid-template-columns: 1fr; gap: 20px; margin: 0 0 18px; }
+.proof .pg2-photo { position: relative; margin: 0; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-lg); background: #fff; }
+.proof .pg2-img { width: 100%; height: 230px; object-fit: cover; display: block; }
+.proof .pg2-tag { position: absolute; top: 14px; left: 14px; z-index: 3; font-size: .68rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: rgba(24,24,27,.46); backdrop-filter: blur(4px); padding: 6px 11px; border-radius: 999px; }
+.proof .pg2-review img { width: 100%; height: auto; display: block; }
+
+.proof .pg2-note { text-align: center; color: var(--muted); font-size: .9rem; margin: 18px 0 44px; }
+.proof .pg2-note strong { color: var(--ink); font-weight: 600; }
+
+/* headline stats */
+.proof .proof-stats { display: grid; grid-template-columns: 1fr; margin: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.proof .proof-stat { padding: 26px 0; text-align: center; border-top: 1px solid var(--line); }
+.proof .proof-stat:first-child { border-top: 0; }
+.proof .pv { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.7rem,6.5vw,3.7rem); line-height: 1; letter-spacing: -.02em; color: var(--ink); }
+.proof .pv .pu { color: var(--accent-deep); font-size: .46em; font-weight: 600; margin-left: 1px; }
+.proof .pl { font-weight: 600; font-size: 1.02rem; margin-top: 12px; letter-spacing: -.01em; }
+.proof .ps { color: var(--muted); font-size: .88rem; margin-top: 5px; }
+
+@media (min-width: 760px) {
+  .proof .pg2-gallery { grid-template-columns: 1fr 1fr; gap: 22px; }
+  .proof .pg2-img { height: 300px; }
+  .proof .proof-stats { grid-template-columns: repeat(3, 1fr); }
+  .proof .proof-stat { border-top: 0; border-left: 1px solid var(--line); padding: 34px 24px; }
+  .proof .proof-stat:first-child { border-left: 0; }
+}
+
+/* ============================================================
  * GRID-BREAK + MICRO-DETAIL PASS — vary section silhouettes
  * away from the repeating card-grid rhythm, and add small
  * tactile motion on hover / scroll.
