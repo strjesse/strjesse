@@ -288,6 +288,24 @@ input[type=range]::-moz-range-thumb { width: 22px; height: 22px; background: var
 .seg--prop button { padding: 10px 6px; font-size: .8rem; text-align: center; line-height: 1.2; }
 @media (max-width: 560px) { .seg--prop button { font-size: .72rem; padding: 10px 3px; } }
 
+/* property type / size dropdowns (dark theme) */
+.az .field--row { display: flex; gap: 14px; }
+.az .field-col { flex: 1; min-width: 0; }
+.az .field-col label { display: block; font-size: .93rem; font-weight: 500; color: #FBFAF8; margin-bottom: 10px; }
+.az-select {
+  width: 100%; appearance: none; -webkit-appearance: none;
+  background-color: rgba(255,255,255,.03); color: #FBFAF8;
+  border: 1px solid rgba(255,255,255,.14); border-radius: 9px;
+  padding: 11px 34px 11px 13px; font: inherit; font-size: .9rem; font-weight: 500; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%23A2A2A9' stroke-width='1.6'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 13px center;
+  transition: border-color .15s;
+}
+.az-select:hover { border-color: #DE5722; }
+.az-select:focus-visible { outline: 2px solid #DE5722; outline-offset: 2px; }
+.az-select option { color: #18181B; }
+.az-select option:disabled { color: #B9B7B1; }
+
 /* score block */
 .score { --score-color: #DE5722; margin-bottom: 24px; }
 .score__lbl { font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: #A2A2A9; margin-bottom: 8px; }

@@ -244,40 +244,48 @@
 
       <div class="analyzer">
         <div class="analyzer__inputs">
-          <!-- Property type → drives furnishing, fixed ops & cleaning cost -->
           <div class="field">
-            <div class="field-top"><label>Property type</label><span class="field-val" id="prop-out">2-bed apartment</span></div>
-            <div class="seg seg--prop" id="propSeg" role="group" aria-label="Property type">
-              <button type="button" data-prop="apt1">1-bed apt</button>
-              <button type="button" data-prop="apt2" class="is-active">2-bed apt</button>
-              <button type="button" data-prop="house2">2-bed house</button>
-              <button type="button" data-prop="house3">3/2 house</button>
-              <button type="button" data-prop="house4">4/3 house</button>
-            </div>
-            <p class="field-note" id="prop-note">Furnishing ≈ $13,000 one-time · fixed ops ≈ $380/mo</p>
+            <div class="field-top"><label for="wrent">Weekly rent to landlord</label><span class="field-val" id="wrent-out">$600</span></div>
+            <input type="range" id="wrent" min="200" max="2000" step="10" value="600" />
+            <p class="field-note" id="rent-note">≈ $2,607 / month</p>
+          </div>
+          <div class="field">
+            <div class="field-top"><label for="adr">Average nightly rate (ADR)</label><span class="field-val" id="adr-out">$250</span></div>
+            <input type="range" id="adr" min="50" max="1000" step="5" value="250" />
+          </div>
+          <div class="field">
+            <div class="field-top"><label for="occ">Estimated occupancy</label><span class="field-val" id="occ-out">70%</span></div>
+            <input type="range" id="occ" min="0" max="100" step="1" value="70" />
           </div>
 
-          <div class="field">
-            <div class="field-top"><label for="rent">Monthly rent to landlord</label><span class="field-val" id="rent-out">$2,200</span></div>
-            <input type="range" id="rent" min="800" max="8000" step="50" value="2200" />
+          <!-- Property type + size drive the expense table -->
+          <div class="field field--row">
+            <div class="field-col">
+              <label for="ptype">Property type</label>
+              <select id="ptype" class="az-select">
+                <option value="apartment" selected>Apartment</option>
+                <option value="house">House / townhouse</option>
+              </select>
+            </div>
+            <div class="field-col">
+              <label for="psize">Property size</label>
+              <select id="psize" class="az-select">
+                <option value="1">1 bedroom</option>
+                <option value="2" selected>2 bedrooms</option>
+                <option value="3">3 bedrooms</option>
+                <option value="4">4 bedrooms</option>
+              </select>
+            </div>
           </div>
-          <div class="field">
-            <div class="field-top"><label for="rate">Average nightly rate</label><span class="field-val" id="rate-out">$165</span></div>
-            <input type="range" id="rate" min="40" max="800" step="5" value="165" />
-          </div>
-          <div class="field">
-            <div class="field-top"><label for="occ">Occupancy rate</label><span class="field-val" id="occ-out">72%</span></div>
-            <input type="range" id="occ" min="30" max="98" step="1" value="72" />
-          </div>
+          <p class="field-note" id="exp-note">Utilities $3,240/yr · insurance &amp; software $1,500/yr · cleaning $220/turnover · furnishing $8,500</p>
 
           <!-- Average length of stay → drives turnovers & cleaning cost -->
           <div class="field">
-            <div class="field-top"><label>Average length of stay</label><span class="field-val" id="nights-out">2 nights</span></div>
+            <div class="field-top"><label>Average length of stay</label><span class="field-val" id="nights-out">4 nights</span></div>
             <div class="seg seg--nights" id="nightsSeg" role="group" aria-label="Average nights per stay">
-              <button type="button" data-n="1">1</button>
-              <button type="button" data-n="2" class="is-active">2</button>
+              <button type="button" data-n="2">2</button>
               <button type="button" data-n="3">3</button>
-              <button type="button" data-n="4">4</button>
+              <button type="button" data-n="4" class="is-active">4</button>
               <button type="button" data-n="5">5</button>
             </div>
             <p class="field-note">Shorter stays mean more turnovers — and higher cleaning cost.</p>
@@ -295,19 +303,25 @@
           </div>
 
           <div class="metrics">
-            <div class="metric"><div class="mlbl">Net profit / month</div><div class="mval" id="net">$617</div></div>
-            <div class="metric"><div class="mlbl">Profit margin</div><div class="mval" id="margin">17%</div></div>
-            <div class="metric"><div class="mlbl">Payback period</div><div class="mval" id="payback">21 mo</div></div>
-            <div class="metric"><div class="mlbl">Cash-on-cash (yr 1)</div><div class="mval" id="coc">57%</div></div>
+            <div class="metric"><div class="mlbl">Annual net profit</div><div class="mval" id="net">$13,797</div></div>
+            <div class="metric"><div class="mlbl">Profit / month</div><div class="mval" id="netmo">$1,150</div></div>
+            <div class="metric"><div class="mlbl">Payback period</div><div class="mval" id="payback">12 mo</div></div>
+            <div class="metric"><div class="mlbl">Total capital needed</div><div class="mval" id="capital">$13,507</div></div>
           </div>
 
           <div class="cost-lines">
-            <div class="cost-line"><span>Gross income / mo</span><span class="v" id="gross">$3,611</span></div>
-            <div class="cost-line"><span>Monthly costs (rent + cleaning + fees + fixed)</span><span class="v" id="costs">$2,994</span></div>
-            <div class="cost-line"><span>One-time furnishing &amp; setup</span><span class="v" id="furn">$13,000</span></div>
+            <div class="cost-line"><span>Annual revenue</span><span class="v" id="revenue">$63,875</span></div>
+            <div class="cost-line"><span>Annual rent</span><span class="v" id="rentyr">$31,286</span></div>
+            <div class="cost-line"><span>Operating expenses / yr</span><span class="v" id="opex">$18,793</span></div>
           </div>
 
-          <a href="#book" class="btn btn--block az-cta" style="margin-top:22px;">Learn to do this in a session</a>
+          <div class="cost-lines">
+            <div class="cost-line"><span>Furnishing &amp; setup</span><span class="v" id="furn">$8,500</span></div>
+            <div class="cost-line"><span>First month's rent</span><span class="v" id="firstrent">$2,607</span></div>
+            <div class="cost-line"><span>Bond (4 weeks)</span><span class="v" id="bond">$2,400</span></div>
+          </div>
+
+          <a href="#book" class="btn btn--block az-cta" style="margin-top:22px;">Learn what the next step is with Jesse</a>
           <p class="disclaimer">Best-estimate figures for illustration only. Actual results depend on market, lease terms, and execution.</p>
         </div>
       </div>

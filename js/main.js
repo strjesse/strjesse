@@ -6,29 +6,34 @@
   var fmt0 = function (n) { return "$" + Math.round(n).toLocaleString("en-US"); };
   var reduceMotion = window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var last = { score: 0, net: 0, margin: 0, payback: NaN, coc: 0, scoreColor: "#DE5722" };
+  var last = { score: 0, net: 0, netMo: 0, payback: NaN, capital: 0, scoreColor: "#DE5722" };
 
   /* =========================================================
    * 1. Deal Analyzer
-   * --- Property presets (best estimates; to be tuned later) ---
-   *     furnish = one-time setup; fixed = monthly utilities/insurance/
-   *     software; clean = net cleaning cost per turnover.
+   *   Expenses keyed by property type + size. Utilities and
+   *   insurance/software are annual; cleaning is per turnover;
+   *   setup is the one-time furnishing cost.
    * =======================================================*/
-  var PROPS = {
-    apt1:   { label: "1-bed apartment",        furnish: 9000,  fixed: 300, clean: 22 },
-    apt2:   { label: "2-bed apartment",        furnish: 13000, fixed: 380, clean: 28 },
-    house2: { label: "2-bed house",            furnish: 17000, fixed: 460, clean: 38 },
-    house3: { label: "3-bed / 2-bath house",   furnish: 23000, fixed: 560, clean: 48 },
-    house4: { label: "4-bed / 3-bath house",   furnish: 31000, fixed: 700, clean: 60 }
+  var EXPENSES = {
+    apartment: {
+      1: { util: 2700, ins: 1500, clean: 140, setup: 7000 },
+      2: { util: 3240, ins: 1500, clean: 220, setup: 8500 },
+      3: { util: 3800, ins: 1500, clean: 300, setup: 10000 },
+      4: { util: 4300, ins: 1500, clean: 330, setup: 12000 }
+    },
+    house: {
+      2: { util: 3900, ins: 1500, clean: 220, setup: 9000 },
+      3: { util: 4500, ins: 1500, clean: 300, setup: 12000 },
+      4: { util: 5000, ins: 1500, clean: 330, setup: 16000 }
+    }
   };
-  var PLATFORM_RATE = 0.03; // host platform fee, share of gross
 
-  var azState = { prop: "apt2", nights: 2 };
+  var azState = { ptype: "apartment", psize: 2, nights: 4 };
 
-  var azInputs = ["rent", "rate", "occ"].map($);
+  var azInputs = ["wrent", "adr", "occ"].map($);
   var hasAnalyzer = !!azInputs[0];
 
-  // Red → green spectrum: red at/below 50, full green at/above 95.
+  // Red → green spectrum across the score range.
   var SCORE_STOPS = [
     { s: 50, c: [224, 69, 58] },   // red
     { s: 68, c: [229, 142, 46] },  // orange
@@ -54,89 +59,101 @@
   }
   function rgb(c) { return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"; }
 
-  function band(score, net) {
-    if (net <= 0 || score < 50) return {
+  // Score is a pure function of ANNUAL NET PROFIT.
+  function computeScore(net) {
+    if (net <= 0) return Math.max(0, Math.min(49, Math.round(49 + net * (49 / 20000))));
+    if (net < 10000) return Math.round(50 + (net / 10000) * 15);            // 50–65
+    if (net < 15000) return Math.round(66 + ((net - 10000) / 5000) * 9);    // 66–75
+    if (net < 30000) return Math.round(76 + ((net - 15000) / 15000) * 9);   // 76–85
+    return Math.min(100, Math.round(86 + ((net - 30000) / 30000) * 14));    // 86–100
+  }
+
+  function band(net) {
+    if (net <= 0) return {
       t: "Below breakeven",
-      d: "Costs outrun revenue at these numbers. Raise the nightly rate or occupancy, lower the rent, or walk away."
+      d: "At these inputs the costs outrun revenue. Raise ADR or occupancy, lower the rent, or walk away."
     };
-    if (score < 65) return {
+    if (net < 10000) return {
       t: "Viable, but low margin",
-      d: "It cash-flows, but the cushion is thin. One slow month could erase the profit — tighten the numbers first."
+      d: "It cash-flows, but the cushion is thin. Tighten the numbers before you commit."
     };
-    if (score < 80) return {
+    if (net < 15000) return {
       t: "A decent deal",
-      d: "The spread covers your costs with a workable margin. Worth a closer underwrite with Jesse."
+      d: "A workable annual profit. Worth a closer underwrite with Jesse."
     };
-    if (score < 95) return {
-      t: "A very good deal",
-      d: "Strong margin and a quick payback. This is the kind of unit the model is built to find."
+    if (net < 30000) return {
+      t: "A great deal",
+      d: "Strong annual profit and a sensible payback — the kind of unit the model targets."
     };
     return {
       t: "An incredible opportunity",
-      d: "Exceptional margin and cash-on-cash. Move fast — deals like this don't sit around."
+      d: "Exceptional annual profit. Move fast — deals like this don't sit around."
     };
   }
 
-  function computeScore(margin, coc, net) {
-    if (net <= 0) {
-      // below breakeven → 0–49, scaled by how close to breakeven
-      return Math.max(0, Math.min(49, Math.round(49 + margin)));
-    }
-    var marginPts = Math.max(0, Math.min(34, (margin / 45) * 30));
-    var cocPts    = Math.max(0, Math.min(24, (coc / 160) * 20));
-    return Math.max(50, Math.min(100, Math.round(50 + marginPts + cocPts)));
+  function expense() {
+    var byType = EXPENSES[azState.ptype] || EXPENSES.apartment;
+    return byType[azState.psize] || byType[2] || byType[Object.keys(byType)[0]];
   }
 
   function calc() {
-    var p     = PROPS[azState.prop];
-    var rent  = +$("rent").value;
-    var rate  = +$("rate").value;
-    var occ   = +$("occ").value / 100;
+    var e      = expense();
+    var wrent  = +$("wrent").value;
+    var adr    = +$("adr").value;
+    var occ    = +$("occ").value / 100;
     var nights = azState.nights;
 
-    // live input labels
-    $("rent-out").textContent = fmt0(rent);
-    $("rate-out").textContent = fmt0(rate);
-    $("occ-out").textContent  = $("occ").value + "%";
-    $("nights-out").textContent = nights + (nights === 1 ? " night" : " nights");
-    $("prop-out").textContent = p.label;
-    $("prop-note").textContent = "Furnishing ≈ " + fmt0(p.furnish) + " one-time · fixed ops ≈ " + fmt0(p.fixed) + "/mo";
+    var monthlyRent = (wrent / 7) * (365 / 12);
+    var annualRent  = (wrent / 7) * 365;
 
-    var gross      = rate * 30.4 * occ;          // monthly revenue
-    var occNights  = 30.4 * occ;
-    var turnovers  = nights > 0 ? occNights / nights : 0;
-    var cleaning   = turnovers * p.clean;        // more turnovers → more cleaning
-    var platform   = gross * PLATFORM_RATE;
-    var fixed      = p.fixed;
-    var costs      = rent + cleaning + platform + fixed;
-    var net        = gross - costs;
-    var margin     = gross > 0 ? (net / gross) * 100 : 0;
-    var payback    = net > 0 ? p.furnish / net : Infinity;
-    var coc        = p.furnish > 0 ? (net * 12 / p.furnish) * 100 : 0;
-    var score      = computeScore(margin, coc, net);
-    var color      = scoreColor(score);
-    var info       = band(score, net);
+    // live input labels
+    $("wrent-out").textContent = fmt0(wrent);
+    $("adr-out").textContent   = fmt0(adr);
+    $("occ-out").textContent   = $("occ").value + "%";
+    $("nights-out").textContent = nights + " nights";
+    $("rent-note").textContent = "≈ " + fmt0(monthlyRent) + " / month";
+    $("exp-note").textContent =
+      "Utilities " + fmt0(e.util) + "/yr · insurance & software " + fmt0(e.ins) +
+      "/yr · cleaning " + fmt0(e.clean) + "/turnover · furnishing " + fmt0(e.setup);
+
+    var revenue   = adr * occ * 365;             // annual revenue
+    var occNights = 365 * occ;
+    var turnovers = nights > 0 ? occNights / nights : 0;
+    var cleaning  = turnovers * e.clean;
+    var opex      = e.util + e.ins + cleaning;   // annual operating expenses
+    var net       = revenue - annualRent - opex; // annual net profit
+    var netMo     = net / 12;
+
+    var bond     = wrent * 4;                     // 4 weeks bond
+    var capital  = e.setup + monthlyRent + bond;  // furnishing + 1st month + bond
+    var payback  = net > 0 ? capital / netMo : Infinity;
+
+    var score = computeScore(net);
+    var color = scoreColor(score);
+    var info  = band(net);
 
     // metrics
     $("net").textContent     = fmt0(net);
-    $("margin").textContent  = Math.round(margin) + "%";
+    $("netmo").textContent   = fmt0(netMo);
     $("payback").textContent = net > 0 ? Math.ceil(payback) + " mo" : "—";
-    $("coc").textContent     = net > 0 ? Math.round(coc) + "%" : "—";
+    $("capital").textContent = fmt0(capital);
 
-    // cost summary
-    $("gross").textContent = fmt0(gross);
-    $("costs").textContent = fmt0(costs);
-    $("furn").textContent  = fmt0(p.furnish);
+    // profit breakdown + capital lines
+    $("revenue").textContent   = fmt0(revenue);
+    $("rentyr").textContent    = fmt0(annualRent);
+    $("opex").textContent      = fmt0(opex);
+    $("furn").textContent      = fmt0(e.setup);
+    $("firstrent").textContent = fmt0(monthlyRent);
+    $("bond").textContent      = fmt0(bond);
 
     // score block
     $("score").textContent      = score;
     $("score-band").textContent = info.t;
     $("score-desc").textContent = info.d;
-    $("score-bar").style.width  = score + "%";
-    var wrap = $("score-wrap");
-    wrap.style.setProperty("--score-color", color);
+    $("score-bar").style.width  = Math.max(0, Math.min(100, score)) + "%";
+    $("score-wrap").style.setProperty("--score-color", color);
 
-    last = { score: score, net: net, margin: margin, payback: net > 0 ? payback : NaN, coc: coc, scoreColor: color };
+    last = { score: score, net: net, netMo: netMo, payback: net > 0 ? payback : NaN, capital: capital, scoreColor: color };
   }
 
   function setActive(container, btn) {
@@ -144,15 +161,29 @@
     btn.classList.add("is-active");
   }
 
+  // House has no 1-bed in the data — disable sizes that don't exist for the type.
+  function syncSizeOptions() {
+    var sizes = Object.keys(EXPENSES[azState.ptype]).map(Number);
+    var sel = $("psize");
+    Array.prototype.forEach.call(sel.options, function (o) {
+      o.disabled = sizes.indexOf(+o.value) === -1;
+    });
+    if (sizes.indexOf(azState.psize) === -1) {
+      azState.psize = sizes[0];
+      sel.value = String(azState.psize);
+    }
+  }
+
   if (hasAnalyzer) {
     azInputs.forEach(function (el) { el.addEventListener("input", calc); });
 
-    var propSeg = $("propSeg");
-    propSeg.addEventListener("click", function (e) {
-      var btn = e.target.closest("button[data-prop]");
-      if (!btn) return;
-      azState.prop = btn.dataset.prop;
-      setActive(propSeg, btn);
+    $("ptype").addEventListener("change", function () {
+      azState.ptype = this.value;
+      syncSizeOptions();
+      calc();
+    });
+    $("psize").addEventListener("change", function () {
+      azState.psize = +this.value;
       calc();
     });
 
@@ -165,6 +196,7 @@
       calc();
     });
 
+    syncSizeOptions();
     calc();
   }
 
@@ -259,9 +291,9 @@
   function animateAnalyzer() {
     countUp($("score"), last.score, function (v) { return Math.round(v); });
     countUp($("net"), last.net, function (v) { return fmt0(v); });
-    countUp($("margin"), last.margin, function (v) { return Math.round(v) + "%"; });
+    countUp($("netmo"), last.netMo, function (v) { return fmt0(v); });
     countUp($("payback"), last.payback, function (v) { return Math.ceil(v) + " mo"; });
-    countUp($("coc"), last.coc, function (v) { return Math.round(v) + "%"; });
+    countUp($("capital"), last.capital, function (v) { return fmt0(v); });
     var w = Math.max(0, Math.min(100, last.score));
     var bar = $("score-bar");
     if (bar && !reduceMotion) {
