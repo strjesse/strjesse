@@ -842,11 +842,11 @@ body { padding-bottom: 76px; } /* room for sticky bar */
 .site-header.scrolled .nav { height: 60px; }
 @media (min-width: 900px) { .site-header.scrolled .nav { height: 72px; } }
 
-/* FAQ on the dark booking-section background (matches .bw) */
+/* FAQ on the dark booking-section background (matches .bw). Flat dark
+   (no radial glow) so it blends seamlessly with the booking section's
+   dark base above — no visible seam between the two. */
 .faq-dark {
-  background:
-    radial-gradient(900px 460px at 82% -10%, rgba(222,87,34,.12), transparent 60%),
-    #121214;
+  background: #121214;
   color: #FBFAF8;
 }
 .faq-dark h2 { color: #FBFAF8; }
