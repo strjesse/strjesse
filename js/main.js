@@ -83,11 +83,11 @@
     };
     if (net < 30000) return {
       t: "A great deal",
-      d: "Strong annual profit and a sensible payback — the kind of unit the model targets."
+      d: "Strong annual profit and a sensible payback, the kind of unit the model targets."
     };
     return {
       t: "An incredible opportunity",
-      d: "Exceptional annual profit. Move fast — deals like this don't sit around."
+      d: "Exceptional annual profit. Move fast. Deals like this don't sit around."
     };
   }
 
@@ -135,7 +135,7 @@
     // metrics
     $("net").textContent     = fmt0(net);
     $("netmo").textContent   = fmt0(netMo);
-    $("payback").textContent = net > 0 ? Math.ceil(payback) + " mo" : "—";
+    $("payback").textContent = net > 0 ? Math.ceil(payback) + " mo" : "-";
     $("capital").textContent = fmt0(capital);
 
     // profit breakdown + capital lines
@@ -276,7 +276,7 @@
   function countUp(el, target, fmt) {
     if (!el) return;
     if (reduceMotion || !isFinite(target)) {
-      el.textContent = isFinite(target) ? fmt(target) : "—";
+      el.textContent = isFinite(target) ? fmt(target) : "-";
       return;
     }
     var startT = performance.now(), dur = 900;
