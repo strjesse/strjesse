@@ -842,6 +842,11 @@ body { padding-bottom: 76px; } /* room for sticky bar */
 .site-header.scrolled .nav { height: 60px; }
 @media (min-width: 900px) { .site-header.scrolled .nav { height: 72px; } }
 
+/* Real Jesse portrait in About — portrait aspect on every screen
+   (base .about__photo is landscape 16/10, which would crop a portrait). */
+.about-photo { aspect-ratio: 4 / 5; }
+.about-photo .duotone { object-position: center 40%; }
+
 /* ============================================================
  * PROOF / WHY-TRUST SECTION (photo-led)
  * ========================================================== */
