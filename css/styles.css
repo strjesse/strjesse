@@ -842,6 +842,22 @@ body { padding-bottom: 76px; } /* room for sticky bar */
 .site-header.scrolled .nav { height: 60px; }
 @media (min-width: 900px) { .site-header.scrolled .nav { height: 72px; } }
 
+/* FAQ on the dark booking-section background (matches .bw) */
+.faq-dark {
+  background:
+    radial-gradient(900px 460px at 82% -10%, rgba(222,87,34,.12), transparent 60%),
+    #121214;
+  color: #FBFAF8;
+}
+.faq-dark h2 { color: #FBFAF8; }
+.faq-dark .faq details { border-top-color: rgba(255,255,255,.10); }
+.faq-dark .faq details:last-of-type { border-bottom-color: rgba(255,255,255,.10); }
+.faq-dark summary { color: #FBFAF8; }
+.faq-dark .faq-plus { color: var(--accent); }
+.faq-dark details p,
+.faq-dark .faq-body > p { color: #A2A2A9; }
+.faq-dark :focus-visible { outline-color: var(--accent); }
+
 /* Real Jesse portrait in About — portrait aspect on every screen
    (base .about__photo is landscape 16/10, which would crop a portrait). */
 .about-photo { aspect-ratio: 4 / 5; }
