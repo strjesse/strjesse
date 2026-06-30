@@ -113,8 +113,8 @@
     $("nights-out").textContent = nights + " nights";
     $("rent-note").textContent = "≈ " + fmt0(monthlyRent) + " / month";
     $("exp-note").textContent =
-      "Utilities " + fmt0(e.util) + "/yr · insurance & software " + fmt0(e.ins) +
-      "/yr · cleaning " + fmt0(e.clean) + "/turnover · furnishing " + fmt0(e.setup);
+      "Utilities " + fmt0(e.util) + "/yr · Insurance & Software " + fmt0(e.ins) +
+      "/yr · Cleaning " + fmt0(e.clean) + "/turnover · Furnishing " + fmt0(e.setup);
 
     var revenue   = adr * occ * 365;             // annual revenue
     var occNights = 365 * occ;
@@ -124,9 +124,9 @@
     var net       = revenue - annualRent - opex; // annual net profit
     var netMo     = net / 12;
 
-    var bond     = wrent * 4;                     // 4 weeks bond
-    var capital  = e.setup + monthlyRent + bond;  // furnishing + 1st month + bond
-    var payback  = net > 0 ? capital / netMo : Infinity;
+    var bond     = monthlyRent;                   // bond equals first month's rent
+    var capital  = e.setup + monthlyRent + bond;  // total capital needed
+    var payback  = net > 0 ? e.setup / netMo : Infinity; // payback on furnishing only
 
     var score = computeScore(net);
     var color = scoreColor(score);
