@@ -28,7 +28,7 @@
     }
   };
 
-  var azState = { ptype: "apartment", psize: 2, nights: 4 };
+  var azState = { ptype: "apartment", psize: 2, nights: 3 };
 
   var azInputs = ["wrent", "adr", "occ"].map($);
   var hasAnalyzer = !!azInputs[0];
@@ -161,31 +161,71 @@
     btn.classList.add("is-active");
   }
 
+  // Custom dark dropdown (themed, replaces native select popups).
+  function initDropdown(id, onChange) {
+    var el = $(id);
+    if (!el) return null;
+    var btn = el.querySelector(".az-dd__btn");
+    var valEl = el.querySelector(".az-dd__val");
+    var list = el.querySelector(".az-dd__list");
+
+    function close() { el.classList.remove("is-open"); btn.setAttribute("aria-expanded", "false"); }
+    function closeAll() {
+      Array.prototype.forEach.call(document.querySelectorAll(".az-dd.is-open"), function (o) {
+        o.classList.remove("is-open");
+        o.querySelector(".az-dd__btn").setAttribute("aria-expanded", "false");
+      });
+    }
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var wasOpen = el.classList.contains("is-open");
+      closeAll();
+      if (!wasOpen) { el.classList.add("is-open"); btn.setAttribute("aria-expanded", "true"); }
+    });
+    btn.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+    list.addEventListener("click", function (e) {
+      var opt = e.target.closest(".az-dd__opt");
+      if (!opt || opt.getAttribute("aria-disabled") === "true") return;
+      el._select(opt.dataset.value);
+      close();
+    });
+    document.addEventListener("click", close);
+
+    el._select = function (value) {
+      var opt = list.querySelector('.az-dd__opt[data-value="' + value + '"]');
+      if (!opt) return;
+      Array.prototype.forEach.call(list.children, function (o) {
+        var on = o === opt;
+        o.classList.toggle("is-selected", on);
+        o.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      valEl.textContent = opt.textContent.trim();
+      el.dataset.value = value;
+      if (onChange) onChange(value);
+    };
+    el._setDisabled = function (value, disabled) {
+      var o = list.querySelector('.az-dd__opt[data-value="' + value + '"]');
+      if (o) o.setAttribute("aria-disabled", disabled ? "true" : "false");
+    };
+    return el;
+  }
+
   // House has no 1-bed in the data — disable sizes that don't exist for the type.
   function syncSizeOptions() {
     var sizes = Object.keys(EXPENSES[azState.ptype]).map(Number);
-    var sel = $("psize");
-    Array.prototype.forEach.call(sel.options, function (o) {
-      o.disabled = sizes.indexOf(+o.value) === -1;
-    });
+    var dd = $("psize");
+    [1, 2, 3, 4].forEach(function (n) { dd._setDisabled(n, sizes.indexOf(n) === -1); });
     if (sizes.indexOf(azState.psize) === -1) {
       azState.psize = sizes[0];
-      sel.value = String(azState.psize);
+      dd._select(String(azState.psize));
     }
   }
 
   if (hasAnalyzer) {
     azInputs.forEach(function (el) { el.addEventListener("input", calc); });
 
-    $("ptype").addEventListener("change", function () {
-      azState.ptype = this.value;
-      syncSizeOptions();
-      calc();
-    });
-    $("psize").addEventListener("change", function () {
-      azState.psize = +this.value;
-      calc();
-    });
+    initDropdown("ptype", function (v) { azState.ptype = v; syncSizeOptions(); calc(); });
+    initDropdown("psize", function (v) { azState.psize = +v; calc(); });
 
     var nightsSeg = $("nightsSeg");
     nightsSeg.addEventListener("click", function (e) {

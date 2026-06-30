@@ -97,7 +97,7 @@
     <div class="hero__warm" aria-hidden="true"></div>
     <div class="wrap hero__inner">
       <p class="eyebrow">1-on-1 Rental Arbitrage Mentoring</p>
-      <h1>The <em>honest</em> 1-on-1 every beginner wishes they'd had.</h1>
+      <h1>The <em>honest</em> <span style="white-space:nowrap;">1-on-1</span> every beginner wishes they'd had.</h1>
       <div class="hero-actions">
         <a href="#book" class="btn btn--accent btn--lg">Book your session</a>
         <a href="#analyzer" class="btn btn--wire btn--lg">Try the analyser</a>
@@ -238,7 +238,7 @@
     <div class="wrap">
       <div class="head head--center">
         <p class="eyebrow">Try it yourself</p>
-        <h2>The deal analyser</h2>
+        <h2>The arbitrage analyser</h2>
         <p class="lead">Use your estimated figures to evaluate the property's profitability potential.</p>
       </div>
 
@@ -261,34 +261,55 @@
           <!-- Property type + size drive the expense table -->
           <div class="field field--row">
             <div class="field-col">
-              <label for="ptype">Property type</label>
-              <select id="ptype" class="az-select">
-                <option value="apartment" selected>Apartment</option>
-                <option value="house">House / townhouse</option>
-              </select>
+              <label id="ptype-lbl">Property type</label>
+              <div class="az-dd" id="ptype" data-value="apartment">
+                <button type="button" class="az-dd__btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="ptype-lbl">
+                  <span class="az-dd__val">Apartment</span>
+                  <svg viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg>
+                </button>
+                <ul class="az-dd__list" role="listbox" aria-labelledby="ptype-lbl">
+                  <li class="az-dd__opt is-selected" role="option" data-value="apartment" aria-selected="true">Apartment</li>
+                  <li class="az-dd__opt" role="option" data-value="house" aria-selected="false">House / townhouse</li>
+                </ul>
+              </div>
             </div>
             <div class="field-col">
-              <label for="psize">Property size</label>
-              <select id="psize" class="az-select">
-                <option value="1">1 bedroom</option>
-                <option value="2" selected>2 bedrooms</option>
-                <option value="3">3 bedrooms</option>
-                <option value="4">4 bedrooms</option>
-              </select>
+              <label id="psize-lbl">Property size</label>
+              <div class="az-dd" id="psize" data-value="2">
+                <button type="button" class="az-dd__btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="psize-lbl">
+                  <span class="az-dd__val">2 bedrooms</span>
+                  <svg viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg>
+                </button>
+                <ul class="az-dd__list" role="listbox" aria-labelledby="psize-lbl">
+                  <li class="az-dd__opt" role="option" data-value="1" aria-selected="false">1 bedroom</li>
+                  <li class="az-dd__opt is-selected" role="option" data-value="2" aria-selected="true">2 bedrooms</li>
+                  <li class="az-dd__opt" role="option" data-value="3" aria-selected="false">3 bedrooms</li>
+                  <li class="az-dd__opt" role="option" data-value="4" aria-selected="false">4 bedrooms</li>
+                </ul>
+              </div>
             </div>
           </div>
           <p class="field-note" id="exp-note">Utilities $3,240/yr · Insurance &amp; Software $1,500/yr · Cleaning $220/turnover · Furnishing $8,500</p>
 
           <!-- Average length of stay → drives turnovers & cleaning cost -->
           <div class="field">
-            <div class="field-top"><label>Average length of stay</label><span class="field-val" id="nights-out">4 nights</span></div>
+            <div class="field-top"><label>Average length of stay</label><span class="field-val" id="nights-out">3 nights</span></div>
             <div class="seg seg--nights" id="nightsSeg" role="group" aria-label="Average nights per stay">
               <button type="button" data-n="2">2</button>
-              <button type="button" data-n="3">3</button>
-              <button type="button" data-n="4" class="is-active">4</button>
+              <button type="button" data-n="3" class="is-active">3</button>
+              <button type="button" data-n="4">4</button>
               <button type="button" data-n="5">5</button>
             </div>
             <p class="field-note">Shorter stays mean more turnovers, and higher cleaning cost.</p>
+          </div>
+
+          <div class="az-steps-wrap">
+            <p class="az-steps__lbl">How to use it</p>
+            <ol class="az-steps">
+              <li class="az-step"><span class="az-step__n">1</span><p class="az-step__t">Pull the estimated nightly rate, occupancy and rent from short-stay data tools like AirDNA or BNBCalc.</p></li>
+              <li class="az-step"><span class="az-step__n">2</span><p class="az-step__t">Drop those figures into the analyser to score the opportunity.</p></li>
+              <li class="az-step"><span class="az-step__n">3</span><p class="az-step__t">Found a deal that stacks up? <a href="#book">Learn how to execute it with Jesse.</a></p></li>
+            </ol>
           </div>
         </div>
 
@@ -296,23 +317,23 @@
           <!-- Profitability score /100 -->
           <div class="score" id="score-wrap">
             <div class="score__lbl">Deal score</div>
-            <div class="score__num"><span id="score">69</span><span class="score__den">/ 100</span></div>
-            <div class="score__band" id="score-band">A decent deal</div>
-            <div class="score__bar"><span id="score-bar" style="width:69%"></span></div>
-            <p class="score__desc" id="score-desc">The spread covers your costs with a workable margin. Worth a closer underwrite with Jesse.</p>
+            <div class="score__num"><span id="score">64</span><span class="score__den">/ 100</span></div>
+            <div class="score__band" id="score-band">Viable, but low margin</div>
+            <div class="score__bar"><span id="score-bar" style="width:64%"></span></div>
+            <p class="score__desc" id="score-desc">It cash-flows, but the cushion is thin. Tighten the numbers before you commit.</p>
           </div>
 
           <div class="metrics">
-            <div class="metric"><div class="mlbl">Annual net profit</div><div class="mval" id="net">$13,797</div></div>
-            <div class="metric"><div class="mlbl">Profit / month</div><div class="mval" id="netmo">$1,150</div></div>
-            <div class="metric"><div class="mlbl">Payback period</div><div class="mval" id="payback">8 mo</div></div>
+            <div class="metric"><div class="mlbl">Annual net profit</div><div class="mval" id="net">$9,113</div></div>
+            <div class="metric"><div class="mlbl">Profit / month</div><div class="mval" id="netmo">$759</div></div>
+            <div class="metric"><div class="mlbl">Payback period</div><div class="mval" id="payback">12 mo</div></div>
             <div class="metric"><div class="mlbl">Total capital needed</div><div class="mval" id="capital">$13,714</div></div>
           </div>
 
           <div class="cost-lines">
             <div class="cost-line"><span>Annual revenue</span><span class="v" id="revenue">$63,875</span></div>
             <div class="cost-line"><span>Annual rent</span><span class="v" id="rentyr">$31,286</span></div>
-            <div class="cost-line"><span>Operating expenses / yr</span><span class="v" id="opex">$18,793</span></div>
+            <div class="cost-line"><span>Operating expenses / yr</span><span class="v" id="opex">$23,477</span></div>
           </div>
 
           <div class="cost-lines">
@@ -325,6 +346,7 @@
           <p class="disclaimer">Actual results depend on market, lease terms, and execution.</p>
         </div>
       </div>
+
     </div>
   </section>
 

@@ -306,6 +306,44 @@ input[type=range]::-moz-range-thumb { width: 22px; height: 22px; background: var
 .az-select option { color: #18181B; }
 .az-select option:disabled { color: #B9B7B1; }
 
+/* custom dark dropdown — themed to the analyser, replaces native white popups */
+.az-dd { position: relative; }
+.az-dd__btn {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: rgba(255,255,255,.03); color: #FBFAF8; border: 1px solid rgba(255,255,255,.14);
+  border-radius: 9px; padding: 11px 13px; font: inherit; font-size: .9rem; font-weight: 500;
+  cursor: pointer; transition: border-color .15s;
+}
+.az-dd__btn:hover, .az-dd.is-open .az-dd__btn { border-color: #DE5722; }
+.az-dd__btn:focus-visible { outline: 2px solid #DE5722; outline-offset: 2px; }
+.az-dd__btn svg { width: 12px; height: 8px; flex: none; color: #A2A2A9; transition: transform .2s; }
+.az-dd.is-open .az-dd__btn svg { transform: rotate(180deg); }
+.az-dd__list {
+  position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; right: 0; margin: 0; padding: 6px;
+  list-style: none; background: #1B1B1F; border: 1px solid rgba(255,255,255,.14); border-radius: 11px;
+  box-shadow: 0 22px 44px -18px rgba(0,0,0,.7); display: none;
+}
+.az-dd.is-open .az-dd__list { display: block; animation: azDD .16s ease; }
+@keyframes azDD { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.az-dd__opt { padding: 9px 11px; border-radius: 7px; font-size: .9rem; color: #FBFAF8; cursor: pointer; transition: background .12s; }
+.az-dd__opt:hover { background: rgba(222,87,34,.14); }
+.az-dd__opt.is-selected { color: #DE5722; font-weight: 600; }
+.az-dd__opt[aria-disabled="true"] { color: #6E6E75; cursor: not-allowed; }
+.az-dd__opt[aria-disabled="true"]:hover { background: transparent; }
+
+/* "How to use it" — 3 numbered steps inside the analyser inputs column */
+.az-steps-wrap { margin-top: 26px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08); }
+.az-steps__lbl { font-size: .74rem; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; color: #DE5722; margin: 0 0 18px; }
+.az-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 16px; }
+.az-step { display: flex; gap: 13px; align-items: flex-start; }
+.az-step__n {
+  flex: none; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: .9rem; background: linear-gradient(135deg, #F0833F, #DE5722, #B5400F); color: #18120E;
+}
+.az-step__t { color: #A2A2A9; font-size: .92rem; line-height: 1.5; margin: 0; padding-top: 4px; }
+.az-step__t a { color: #DE5722; font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(222,87,34,.4); }
+.az-step__t a:hover { border-bottom-color: #DE5722; }
+
 /* score block */
 .score { --score-color: #DE5722; margin-bottom: 24px; }
 .score__lbl { font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: #A2A2A9; margin-bottom: 8px; }
