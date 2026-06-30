@@ -440,7 +440,11 @@ details p { padding: 0 0 22px; color: var(--muted); line-height: 1.6; max-width:
 .bw .reassure__line { font-weight: 700; letter-spacing: -.01em; color: var(--text); }
 .bw .reassure__sub { color: var(--muted); font-size: .92rem; }
 
-.bw .price-row { display: flex; align-items: baseline; gap: 10px; padding-top: 22px; border-top: 1px solid var(--line); }
+.bw .price-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding-top: 22px; border-top: 1px solid var(--line); }
+/* let the booking columns shrink on narrow phones (prevents the calendar
+   being pushed off-screen / Saturday column clipped) */
+.bw-grid { min-width: 0; }
+.bw-copy, .bw .widget { min-width: 0; }
 .bw .price-row .amount { font-size: 3rem; font-weight: 700; letter-spacing: -.03em; line-height: 1; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .bw .price-row .per { color: var(--muted); font-size: .95rem; }
 .bw-contact { margin-top: 18px; color: var(--muted); font-size: .92rem; }
