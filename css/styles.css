@@ -111,7 +111,7 @@ input:focus-visible, textarea:focus-visible,
 
 /* ---- Stats ---- */
 .stats {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px 16px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px 16px;
   margin-top: 44px; padding-top: 34px; border-top: 1px solid var(--line); text-align: center;
 }
 .stat .num { font-size: clamp(1.6rem, 7vw, 2.3rem); font-weight: 600; letter-spacing: -0.02em; }
@@ -634,7 +634,7 @@ body { padding-bottom: 76px; } /* room for sticky bar */
   .hero { padding: 72px 0 56px; }
   .hero-actions { flex-direction: row; justify-content: center; }
   .hero-actions .btn { width: auto; }
-  .stats { grid-template-columns: repeat(4, 1fr); gap: 28px; margin-top: 64px; padding-top: 40px; }
+  .stats { grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 64px; padding-top: 40px; }
   .gap-asym { grid-template-columns: 0.85fr 1.15fr; gap: 56px; align-items: start; }
   .gap-intro { position: sticky; top: 96px; }
   .gap-grid { grid-template-columns: 1fr; gap: 18px; }
