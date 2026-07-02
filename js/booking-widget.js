@@ -17,7 +17,7 @@
   var $ = function (id) { return document.getElementById(id); };
 
   // ---- Config ----
-  var PRICE_LABEL = "$597 AUD";
+  var PRICE_LABEL = "$649 AUD";
   // Fallback slots used only if the availability API can't be reached.
   var FALLBACK_SLOTS = ["10:30 AM", "12:00 PM", "1:30 PM", "3:00 PM", "4:30 PM"];
   var OPEN_DOW = [2, 3, 4, 6]; // bookable days: Tue, Wed, Thu, Sat

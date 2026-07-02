@@ -56,7 +56,7 @@ module.exports = async function (req, res) {
         quantity: 1,
         price_data: {
           currency: process.env.CURRENCY || "aud",
-          unit_amount: parseInt(process.env.PRICE_CENTS || "59700", 10),
+          unit_amount: parseInt(process.env.PRICE_CENTS || "64900", 10),
           product_data: {
             name: "90-minute 1-on-1 session with Jesse",
             description: "Rental arbitrage mentoring — " + date + " at " + time
