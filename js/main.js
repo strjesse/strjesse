@@ -79,7 +79,7 @@
     };
     if (net < 15000) return {
       t: "A decent deal",
-      d: "A workable annual profit. Worth a closer underwrite with Jesse."
+      d: "A workable annual profit. Worth a closer look with Jesse."
     };
     if (net < 30000) return {
       t: "A great deal",
