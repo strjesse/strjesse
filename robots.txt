@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://strjesse.vercel.app/sitemap.xml
+Sitemap: https://strjesse.com.au/sitemap.xml
