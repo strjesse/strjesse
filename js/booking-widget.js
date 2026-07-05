@@ -222,6 +222,12 @@
     if (!this.checkValidity()) { this.reportValidity(); return; }
     var form = this;
 
+    var agree = $("agree");
+    if (agree && !agree.checked) {
+      showError(form, "Please agree to the Terms & Conditions and Privacy Policy to continue.");
+      return;
+    }
+
     var data = {
       name:  $("name").value.trim(),
       email: $("email").value.trim(),

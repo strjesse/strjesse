@@ -902,6 +902,41 @@ body { padding-bottom: 76px; } /* room for sticky bar */
 .site-header.scrolled .nav { height: 60px; }
 @media (min-width: 900px) { .site-header.scrolled .nav { height: 72px; } }
 
+/* ===== Legal pages (privacy / terms) ===== */
+body.legal { padding-bottom: 0; }
+body.legal .site-header { position: sticky; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+body.legal .site-header .brand { color: var(--ink); }
+body.legal .site-header .nav-links a { color: var(--muted); }
+body.legal .site-header .nav-links a:hover { color: var(--ink); }
+body.legal .site-header .nav-cta { background: var(--ink); color: var(--paper); border-color: transparent; }
+body.legal .site-header .nav-cta:hover { background: var(--accent-deep); }
+
+.legal-main { padding: 44px 0 72px; }
+.legal-doc { max-width: 760px; margin: 0 auto; }
+.legal-doc h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(2rem, 5vw, 2.8rem); letter-spacing: -.01em; margin: 8px 0 6px; }
+.legal-doc .updated { color: var(--muted); font-size: .9rem; margin: 0 0 24px; }
+.legal-doc h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.4rem; margin: 38px 0 10px; }
+.legal-doc h3 { font-size: 1.02rem; font-weight: 600; margin: 20px 0 4px; }
+.legal-doc p, .legal-doc li { color: #46464c; font-size: 1rem; line-height: 1.7; }
+.legal-doc p { margin: 0 0 12px; }
+.legal-doc ul { margin: 0 0 12px; padding-left: 20px; display: grid; gap: 7px; }
+.legal-doc a { color: var(--accent-deep); text-decoration: underline; }
+.legal-doc strong { color: var(--ink); }
+.legal-doc .callout { background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line)); border-radius: 12px; padding: 15px 18px; margin: 0 0 24px; font-size: .95rem; }
+.legal-doc .callout p:last-child { margin: 0; }
+.legal-doc .back { display: inline-block; margin-top: 34px; color: var(--muted); text-decoration: none; font-weight: 500; }
+.legal-doc .back:hover { color: var(--ink); }
+
+/* footer legal links */
+.footer-bottom a { color: rgba(251,250,248,.72); text-decoration: underline; }
+.footer-bottom a:hover { color: var(--accent); }
+
+/* booking: agree-to-terms checkbox (dark widget) */
+.bw .agree { display: flex; gap: 10px; align-items: flex-start; margin: 2px 0 16px; font-size: .86rem; color: var(--muted); line-height: 1.45; cursor: pointer; }
+.bw .agree input { flex: none; width: 18px; height: 18px; margin-top: 1px; accent-color: var(--accent); cursor: pointer; }
+.bw .agree a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(222,87,34,.4); }
+.bw .agree a:hover { border-bottom-color: var(--accent); }
+
 /* FAQ on the dark booking-section background (matches .bw). Flat dark
    (no radial glow) so it blends seamlessly with the booking section's
    dark base above — no visible seam between the two. */
