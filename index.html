@@ -445,9 +445,9 @@
     <div class="wrap bw-grid">
       <!-- LEFT: sales copy + price -->
       <div class="bw-copy">
-        <p class="eyebrow">Book a call</p>
-        <h2>Book your session</h2>
-        <p class="lede">A focused 90-minute 1-on-1 with Jesse, built entirely around your situation. Pick a time, lock it in, and leave understanding the model.</p>
+        <p class="eyebrow">Waitlist</p>
+        <h2>Booked out this month</h2>
+        <p class="lede">Every 1-on-1 slot with Jesse is taken for now. Add your email to the waitlist and you'll be the first to know the moment new sessions open.</p>
 
         <div class="reassure">
           <div class="reassure__row">
@@ -470,8 +470,26 @@
         </div>
       </div>
 
-      <!-- RIGHT: booking widget -->
-      <div class="widget" id="widget">
+      <!-- RIGHT: booking widget (TEMPORARY: is-waitlist state — remove class + .widget__waitlist to restore booking) -->
+      <div class="widget is-waitlist" id="widget">
+        <div class="widget__waitlist">
+          <span class="wl-tag">Fully booked</span>
+          <h3 class="wl-title">This month is booked out</h3>
+          <p class="wl-copy">Every 1-on-1 session for <span id="wlMonth">this month</span> is taken. Join the waitlist and you'll be the first to hear when new times open.</p>
+          <form id="waitlistForm" novalidate>
+            <div class="field">
+              <label for="wlEmail">Email</label>
+              <input id="wlEmail" type="email" required autocomplete="email" inputmode="email" placeholder="you@email.com" />
+            </div>
+            <button class="btn-primary" type="submit">Join the waitlist</button>
+            <p class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> We'll only email you about new session availability.</p>
+          </form>
+          <div class="wl-done hidden" id="wlDone">
+            <div class="confirm__circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <h3>You're on the waitlist</h3>
+            <p>You're on the waitlist. We'll be in touch the moment a slot frees up.</p>
+          </div>
+        </div>
         <div class="widget__head">
           <span class="label">Reserve your time</span>
           <div class="progress" id="progress" aria-hidden="true">

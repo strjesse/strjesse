@@ -310,6 +310,61 @@
     });
   }
 
+  // ---- TEMPORARY: waitlist form (only runs while the booked-out panel exists) ----
+  var wlForm = document.getElementById("waitlistForm");
+  if (wlForm) {
+    var wlMonth = document.getElementById("wlMonth");
+    if (wlMonth) {
+      try { wlMonth.textContent = new Date().toLocaleDateString("en-AU", { month: "long" }); }
+      catch (e) { /* leave default */ }
+    }
+    var wlBtn = wlForm.querySelector('button[type="submit"]');
+
+    function wlDone(viaMailto) {
+      wlForm.classList.add("hidden");
+      var done = document.getElementById("wlDone");
+      if (!done) return;
+      var p = done.querySelector("p");
+      if (p) {
+        p.textContent = viaMailto
+          ? "Your email app has opened — send that message and you're on the waitlist."
+          : "You're on the waitlist. We'll be in touch the moment a slot frees up.";
+      }
+      done.classList.remove("hidden");
+    }
+
+    function wlMailto(email) {
+      window.location.href = "mailto:info@strjesse.com.au?subject=" +
+        encodeURIComponent("Waitlist request") + "&body=" +
+        encodeURIComponent("Please add me to the waitlist for a 1-on-1 session.\n\nMy email: " + email);
+      wlDone(true);
+    }
+
+    wlForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var input = document.getElementById("wlEmail");
+      var email = (input.value || "").trim();
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { input.reportValidity(); return; }
+      if (wlBtn) { wlBtn.disabled = true; wlBtn.textContent = "Adding you…"; }
+
+      fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email })
+      })
+        .then(function (r) {
+          if (r.status === 404) { wlMailto(email); return null; } // no backend deployed
+          return r.json().then(function (b) { return { ok: r.ok, b: b }; });
+        })
+        .then(function (res) {
+          if (!res) return;
+          if (res.ok) { wlDone(false); }   // emailed successfully
+          else { wlMailto(email); }        // e.g. 503 not configured — fall back
+        })
+        .catch(function () { wlMailto(email); }); // network error — fall back
+    });
+  }
+
   // ---- Init ----
   renderCalendar();
 
