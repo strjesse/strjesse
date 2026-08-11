@@ -8,7 +8,7 @@
    created here; it's created by the webhook once payment succeeds.
    ===================================================================== */
 const Stripe = require("stripe");
-const { SLOTS, slotToInterval } = require("../lib/slots");
+const { SLOTS, slotToInterval, isBookableDate } = require("../lib/slots");
 const { calendarConfigured, getBusy } = require("../lib/google");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
@@ -29,6 +29,9 @@ module.exports = async function (req, res) {
     }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || SLOTS.indexOf(time) === -1) {
       return res.status(400).json({ error: "Invalid date or time" });
+    }
+    if (!isBookableDate(date)) {
+      return res.status(400).json({ error: "Please choose the next available day or later." });
     }
 
     var iv = slotToInterval(date, time);

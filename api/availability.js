@@ -5,7 +5,7 @@
 
    Response: { date, slots: ["9:00 AM", ...] }
    ===================================================================== */
-const { SLOTS, CLOSED_DOW, slotToInterval } = require("../lib/slots");
+const { SLOTS, CLOSED_DOW, slotToInterval, isBookableDate } = require("../lib/slots");
 const { calendarConfigured, getBusy } = require("../lib/google");
 
 module.exports = async function (req, res) {
@@ -13,6 +13,11 @@ module.exports = async function (req, res) {
     var date = (req.query && req.query.date) || "";
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return res.status(400).json({ error: "Provide ?date=YYYY-MM-DD" });
+    }
+
+    // No same-day (or past) bookings — earliest is the next day.
+    if (!isBookableDate(date)) {
+      return res.json({ date: date, slots: [] });
     }
 
     // Build each slot's UTC interval.

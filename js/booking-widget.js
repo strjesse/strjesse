@@ -26,6 +26,9 @@
   // ---- State ----
   var today = new Date();
   today.setHours(0, 0, 0, 0);
+  // No same-day bookings — earliest selectable day is tomorrow.
+  var minDate = new Date(today);
+  minDate.setDate(minDate.getDate() + 1);
 
   var state = {
     date: null,
@@ -102,7 +105,7 @@
       btn.textContent = day;
       btn.setAttribute("role", "gridcell");
 
-      var isPast = date < today;
+      var isPast = date < minDate; // today and earlier are not bookable
       var isClosed = OPEN_DOW.indexOf(date.getDay()) === -1;
 
       if (isPast || isClosed) {
